@@ -2,15 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mythic & Exotic Tracker</title>
+  <title>Mythic & Exotic Chart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet" />
   <style>
     body {
-      background-color: #121212;
-      color: #fff;
       margin: 0;
       padding: 20px;
-      font-family: Arial, sans-serif;
+      font-family: 'Nunito', Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
+      /* Your background image with a dark overlay for readability */
+      background:
+        linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)),
+        url('https://i.postimg.cc/P5jwwsWq/Screenshot-2025-07-05-181932.png') center center / cover no-repeat;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Mythic Glow Animated Gradient Text */
+    #title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      background: linear-gradient(
+        90deg,
+        #e0b85a,
+        #d4ac4c,
+        #b78d36,
+        #d4ac4c,
+        #e0b85a
+      );
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: mythicGlow 3s linear infinite;
+      user-select: none;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px #b78d36, 0 0 15px #e0b85a;
+    }
+
+    @keyframes mythicGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 300% 50%;
+      }
     }
 
     #counter {
@@ -32,7 +71,7 @@
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 20px;
       max-width: 1000px;
-      margin: 80px auto 0 auto; /* push grid down below counter */
+      margin: 80px auto 0 auto;
     }
 
     .item-wrapper {
@@ -52,7 +91,7 @@
       position: relative;
       cursor: pointer;
       overflow: hidden;
-      transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .item:hover {
@@ -66,30 +105,28 @@
       transition: opacity 0.3s ease;
     }
 
-    .crossed {
+    /* Checked state */
+    .item.checked {
+      border-color: #4CAF50;
+      box-shadow: 0 0 12px 3px rgba(76, 175, 80, 0.7);
+    }
+    .item.checked img {
       opacity: 0.5;
-      border-color: red;
     }
-
-    .crossed::after {
-      content: "";
+    .item.checked::after {
+      content: "✔";
       position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background-color: red;
-      transform: rotate(-45deg);
-      animation: crossFade 0.3s ease;
-    }
-
-    @keyframes crossFade {
-      from {
-        transform: rotate(-45deg) scaleX(0);
-      }
-      to {
-        transform: rotate(-45deg) scaleX(1);
-      }
+      bottom: 6px;
+      left: 6px;
+      font-size: 28px;
+      color: #4CAF50;
+      font-weight: bold;
+      text-shadow:
+        0 0 5px #4CAF50,
+        0 0 10px #4CAF50,
+        0 0 15px #4CAF50;
+      pointer-events: none;
+      user-select: none;
     }
 
     .label {
@@ -99,40 +136,64 @@
       transition: color 0.3s ease;
     }
 
-    /* GOLDEN gradient style for first 15 slots */
     .golden {
       background: radial-gradient(circle at center,
-        #e0b85a 20%,
-        #d4ac4c 60%,
-        #b78d36 100%);
+        #e0b85a 20%, #d4ac4c 60%, #b78d36 100%);
       border: 2px solid #b78d36;
     }
 
-    /* BLUE gradient style for slots 16-27 */
     .blue {
       background: radial-gradient(circle at center,
-        #8ae1ff 20%,
-        #54ccfc 60%,
-        #2a97c7 100%);
+        #8ae1ff 20%, #54ccfc 60%, #2a97c7 100%);
       border: 2px solid #2a97c7;
     }
 
-    /* ORANGE gradient style for slot 28 */
     .orange {
       background: radial-gradient(circle at center,
-        #e1873a 20%,
-        #cc640c 60%,
-        #8b3e00 100%);
+        #e1873a 20%, #cc640c 60%, #8b3e00 100%);
       border: 2px solid #8b3e00;
+    }
+
+    .drop-rate {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #disclaimer {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      font-size: 12px;
+      color: #aaa;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 10px;
+      border-radius: 8px;
+      max-width: 260px;
+      font-family: 'Nunito', Arial, sans-serif;
+      user-select: none;
+      z-index: 1000;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
 
+  <h1 id="title">Mythic & Exotic Chart</h1>
+
   <div id="counter">0 / 28</div>
 
-  <div class="grid" id="trackerGrid">
-    <!-- Slots will be generated by JS -->
+  <div class="grid" id="trackerGrid"></div>
+
+  <div id="disclaimer">
+    some of these odds might be wrong and if you have the correct odds report it to my discord! x.unknown1
   </div>
 
   <script>
@@ -141,60 +202,73 @@
     const totalItems = 28;
 
     const itemData = [
-      ["https://i.postimg.cc/mkR7mD25/T-Icon-Weapons-Assault-Rifle-Mark2-TT-L.webp", "Skye's Assault Rifle"],
-      ["https://i.postimg.cc/FR0jbcmS/T-Icon-Weapons-Burst-Rifle-Mark2-TT-L.webp", "Slone's Striker Burst Rifle"],
-      ["https://i.postimg.cc/GpWFsz0r/T-Icon-Weapons-Ch4-S2-Pump-Shotgun-Weapon-L.webp", "Enhanced Havoc Shotgun"],
-      ["https://i.postimg.cc/437vdqSB/T-Icon-Weapons-Chrono-Pistol-L.webp", "Baron's Double Down Pistol"],
-      ["https://i.postimg.cc/xCP2bxkb/T-Icon-Weapons-Core-Red-Dot-Rifle-Weapon-L.webp", "The Foundation's MK-Seven Assault Rifle"],
-      ["https://i.postimg.cc/y6P1Jd9r/T-Icon-Weapons-Engineer-Grappler-L.webp", "Jules' Glider Gun"],
-      ["https://i.postimg.cc/NfCQ4zd6/T-Icon-Weapons-Launcher-Grenade-Shockwave-Ch4-S4-L.webp", "Kit's Shockwave Launcher"],
-      ["https://i.postimg.cc/zXvrVkqV/T-Icon-Weapons-Midas-Drum-Gun-L.webp", "Midas' Drum Gun (OG)"],
-      ["https://i.postimg.cc/wx0zqr8C/T-Icon-Weapons-Pasta-Ripper-Weapon-L.webp", "Overclocked Pulse Rifle"],
-      ["https://i.postimg.cc/hGTgKPcs/T-Icon-Weapons-Pneumatic-Shotgun-TT-L.webp", "Kit's Charge Shotgun"],
-      ["https://i.postimg.cc/8Pz1LSmk/T-Icon-Weapons-Shockwave-Mace-Melee-Weapon-L.webp", "The Ageless Champion's Shockwave Hammer"],
-      ["https://i.postimg.cc/D027jkVg/T-Icon-Weapons-SK-Grappling-Hook-L.webp", "Skye's Grappler"],
-      ["https://i.postimg.cc/ncWt7QLT/T-Icon-Weapons-SK-M-Med-Soldier-04-Minigun-L.webp", "Brutus' Minigun"],
-      ["https://i.postimg.cc/Jz9MwBVt/T-Icon-Weapons-SMG-Drum-Gold-L.webp", "Midas' Gilded Eye Drum Gun"],
-      ["https://i.postimg.cc/br3p4Cpj/T-T-Icon-BR-Bucket-Nice-Gadget-L.webp", "Mythic Goldfish"],
-      ["https://i.postimg.cc/xdzjq3yK/T-Icon-Weapons-Breach-Shotgun-L.webp", "Heisted Breacher Shotgun"],
-      ["https://i.postimg.cc/85gpvftx/T-Icon-Weapons-Muster-AR-L.webp", "Heisted Explosive Assault Rifle"],
-      ["https://i.postimg.cc/wjPT6GJq/T-Icon-Weapons-Muster-SMG-L.webp", "Heisted Blink Mag SMG"],
-      ["https://i.postimg.cc/fRkRQNVq/T-Icon-Weapons-Slap-SMG-L.webp", "Heisted Run 'N' Gun SMG"],
-      ["https://i.postimg.cc/xCG03jZ8/T-Icon-Weapons-Stack-Shotgun-L.webp", "Heisted Accelerant Shotgun"],
-      ["https://i.postimg.cc/FsTH6RHJ/T-Icon-Weapons-SK-Dual-45-L.webp", "Hop Rock Dualies"],
-      ["https://i.postimg.cc/QNktpSLm/T-Icon-Weapons-Tracking-Pistol-Weapon-L.webp", "Shadow Tracker"],
-      ["https://i.postimg.cc/R0kFTDVs/T-Icon-Weapons-Hunting-Gas-L.webp", "Lawless Stink Rifle"],
-      ["https://i.postimg.cc/yd0NpyDV/T-Icon-Weapons-Launcher-Rocket-Mk2-Jump-L.webp", "Lawless Shockwave Rocket Launcher"],
-      ["https://i.postimg.cc/ZnZ5GvN6/T-Icon-Weapons-Slurp-Bazooka-Lawless-L.webp", "Lawless Slap Cannon"],
-      ["https://i.postimg.cc/3J8w9pYT/TIcon-Weapons-Exotic-Explosive-Pistol-L.webp", "Lawless Explosive Mammoth Pistol"],
-      ["https://i.postimg.cc/brTwpY0W/T-Icon-BR-Consumable-Chug-Jug-Agile-Slap-L.webp", "Lawless Slap Jug"],
-      ["https://i.postimg.cc/KYkjB2F3/T-Icon-Weapons-Rocket-Launcher-Mark2-TT-L.webp", "Rocket Launcher"]
+      ["https://i.postimg.cc/mkR7mD25/T-Icon-Weapons-Assault-Rifle-Mark2-TT-L.webp", "Skye's Assault Rifle", "0.02%"],
+      ["https://i.postimg.cc/FR0jbcmS/T-Icon-Weapons-Burst-Rifle-Mark2-TT-L.webp", "Slone's Striker Burst Rifle", "0.02%"],
+      ["https://i.postimg.cc/GpWFsz0r/T-Icon-Weapons-Ch4-S2-Pump-Shotgun-Weapon-L.webp", "Enhanced Havoc Shotgun", "0.02%"],
+      ["https://i.postimg.cc/437vdqSB/T-Icon-Weapons-Chrono-Pistol-L.webp", "Baron's Double Down Pistol", "0.03%"],
+      ["https://i.postimg.cc/xCP2bxkb/T-Icon-Weapons-Core-Red-Dot-Rifle-Weapon-L.webp", "MK-Seven Assault Rifle", "0.02%"],
+      ["https://i.postimg.cc/y6P1Jd9r/T-Icon-Weapons-Engineer-Grappler-L.webp", "Jules' Glider Gun", "0.02%"],
+      ["https://i.postimg.cc/NfCQ4zd6/T-Icon-Weapons-Launcher-Grenade-Shockwave-Ch4-S4-L.webp", "Kit's Shockwave Launcher", "0.02%"],
+      ["https://i.postimg.cc/zXvrVkqV/T-Icon-Weapons-Midas-Drum-Gun-L.webp", "Midas' Drum Gun (OG)", "0.02%"],
+      ["https://i.postimg.cc/wx0zqr8C/T-Icon-Weapons-Pasta-Ripper-Weapon-L.webp", "Overclocked Pulse Rifle", "0.02%"],
+      ["https://i.postimg.cc/hGTgKPcs/T-Icon-Weapons-Pneumatic-Shotgun-TT-L.webp", "Kit's Charge Shotgun", "0.02%"],
+      ["https://i.postimg.cc/8Pz1LSmk/T-Icon-Weapons-Shockwave-Mace-Melee-Weapon-L.webp", "Shockwave Hammer", "0.02%"],
+      ["https://i.postimg.cc/D027jkVg/T-Icon-Weapons-SK-Grappling-Hook-L.webp", "Skye's Grappler", "0.02%"],
+      ["https://i.postimg.cc/ncWt7QLT/T-Icon-Weapons-SK-M-Med-Soldier-04-Minigun-L.webp", "Brutus' Minigun", "0.02%"],
+      ["https://i.postimg.cc/Jz9MwBVt/T-Icon-Weapons-SMG-Drum-Gold-L.webp", "Gilded Eye Drum Gun", "0.03%"],
+      ["https://i.postimg.cc/br3p4Cpj/T-T-Icon-BR-Bucket-Nice-Gadget-L.webp", "Mythic Goldfish", "0.11%"],
+      ["https://i.postimg.cc/xdzjq3yK/T-Icon-Weapons-Breach-Shotgun-L.webp", "Heisted Breacher Shotgun", "0.02%"],
+      ["https://i.postimg.cc/85gpvftx/T-Icon-Weapons-Muster-AR-L.webp", "Heisted Explosive AR", "0.01%"],
+      ["https://i.postimg.cc/wjPT6GJq/T-Icon-Weapons-Muster-SMG-L.webp", "Heisted Blink Mag SMG", "0.02%"],
+      ["https://i.postimg.cc/fRkRQNVq/T-Icon-Weapons-Slap-SMG-L.webp", "Run 'N' Gun SMG", "0.02%"],
+      ["https://i.postimg.cc/xCG03jZ8/T-Icon-Weapons-Stack-Shotgun-L.webp", "Accelerant Shotgun", "0.02%"],
+      ["https://i.postimg.cc/FsTH6RHJ/T-Icon-Weapons-SK-Dual-45-L.webp", "Hop Rock Dualies", "0.01%"],
+      ["https://i.postimg.cc/QNktpSLm/T-Icon-Weapons-Tracking-Pistol-Weapon-L.webp", "Shadow Tracker", "0.01%"],
+      ["https://i.postimg.cc/R0kFTDVs/T-Icon-Weapons-Hunting-Gas-L.webp", "Stink Rifle", "0.02%"],
+      ["https://i.postimg.cc/yd0NpyDV/T-Icon-Weapons-Launcher-Rocket-Mk2-Jump-L.webp", "Shockwave Rocket Launcher", "0.02%"],
+      ["https://i.postimg.cc/ZnZ5GvN6/T-Icon-Weapons-Slurp-Bazooka-Lawless-L.webp", "Slap Cannon", "0.01%"],
+      ["https://i.postimg.cc/3J8w9pYT/TIcon-Weapons-Exotic-Explosive-Pistol-L.webp", "Explosive Mammoth Pistol", "0.02%"],
+      ["https://i.postimg.cc/brTwpY0W/T-Icon-BR-Consumable-Chug-Jug-Agile-Slap-L.webp", "Slap Jug", "0.02%"],
+      ["https://i.postimg.cc/KYkjB2F3/T-Icon-Weapons-Rocket-Launcher-Mark2-TT-L.webp", "Rocket Launcher", "0.02%"]
     ];
 
+    const savedChecked = JSON.parse(localStorage.getItem('checkedItems')) || [];
+
     function updateCounter() {
-      const crossed = document.querySelectorAll('.crossed').length;
-      counterDisplay.textContent = `${crossed} / ${totalItems}`;
+      const checked = document.querySelectorAll('.item.checked').length;
+      counterDisplay.textContent = `${checked} / ${totalItems}`;
     }
 
-    itemData.forEach(([imgSrc, name], i) => {
+    itemData.forEach(([imgSrc, name, rate], i) => {
       const wrapper = document.createElement('div');
       wrapper.className = 'item-wrapper';
 
       const item = document.createElement('div');
       item.className = 'item';
+
       if (i < 15) {
-        item.classList.add('golden'); // first 15 golden
+        item.classList.add('golden');
       } else if (i < 27) {
-        item.classList.add('blue');   // slots 16-27 blue
+        item.classList.add('blue');
       } else {
-        item.classList.add('orange'); // slot 28 orange
+        item.classList.add('orange');
       }
 
-      item.innerHTML = `<img src="${imgSrc}" alt="Item ${i + 1}">`;
+      item.innerHTML = `
+        <img src="${imgSrc}" alt="Item ${i + 1}">
+        <div class="drop-rate">${rate}</div>
+      `;
+
+      if (savedChecked.includes(i)) {
+        item.classList.add('checked');
+      }
 
       item.addEventListener('click', () => {
-        item.classList.toggle('crossed');
+        item.classList.toggle('checked');
         updateCounter();
+
+        const currentlyChecked = [...document.querySelectorAll('.item.checked')].map(el => [...trackerGrid.children].findIndex(w => w.firstChild === el));
+        localStorage.setItem('checkedItems', JSON.stringify(currentlyChecked));
       });
 
       const label = document.createElement('div');
@@ -208,6 +282,5 @@
 
     updateCounter();
   </script>
-
 </body>
 </html>
